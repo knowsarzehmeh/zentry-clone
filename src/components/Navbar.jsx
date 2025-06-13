@@ -17,7 +17,7 @@ const Navbar = () => {
   const [isIndicatorActive, setIsIndicatorActive] = useState(false);
   const { y: currentScrollY } = useWindowScroll();
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
   // Toggle audio and visual indicator
   const toggleAudioIndicator = () => {
@@ -39,18 +39,18 @@ const Navbar = () => {
       // Topmost position: show navbar without floating-nav
       setIsNavVisible(true);
       navContainerRef.current.classList.remove("floating-nav");
-    } else if (currentScrollY > lastScrollY) {
+    } else if (currentScrollY > lastScrollYRef.current) {
       // Scrolling down: hide navbar and apply floating-nav
       setIsNavVisible(false);
       navContainerRef.current.classList.add("floating-nav");
-    } else if (currentScrollY < lastScrollY) {
+    } else if (currentScrollY < lastScrollYRef.current) {
       // Scrolling up: show navbar with floating-nav
       setIsNavVisible(true);
       navContainerRef.current.classList.add("floating-nav");
     }
 
-    setLastScrollY(currentScrollY);
-  }, [currentScrollY, lastScrollY]);
+    lastScrollYRef.current = currentScrollY;
+  }, [currentScrollY]);
 
   useEffect(() => {
     gsap.to(navContainerRef.current, {
